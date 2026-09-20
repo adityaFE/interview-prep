@@ -1,0 +1,23 @@
+.main{
+    display: flex;
+    flex-direction: column;
+}
+.main-container{
+    display: grid;
+    grid-template-columns:  repeat(auto-fit, minmax(300px, 1fr));
+    padding: 16px;
+    gap: 24px;
+    margin: 16px;
+}
+
+.main-card-container{
+    border: 1px solid black;
+    padding: 16px;
+    overflow-wrap: break-word;
+}
+
+.load-more{
+    align-self: center;
+    padding: 8px;
+    cursor: pointer;
+}

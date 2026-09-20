@@ -1,0 +1,53 @@
+MACHINE CODING — Job Board
+Time target: 30 minutes
+
+Requirements:
+1. Fetch job story IDs from Hacker News API
+2. Render 6 jobs initially
+3. Fetch each job's details individually by ID
+4. Show job title as clickable external link
+5. Show author name and formatted timestamp (MM/DD/YYYY, HH:MM)
+6. "Load more jobs" button appends 6 more jobs per click
+7. Loading state while job IDs are fetching
+8. Loading state per job card while its details load
+
+API:
+- Job IDs:  https://hacker-news.firebaseio.com/v0/jobstories.json
+- Job detail: https://hacker-news.firebaseio.com/v0/item/{id}.json
+
+Constraints:
+- No external libraries (no React Query, no Axios — plain fetch)
+- Handle API failures gracefully
+- Don't refetch already-loaded jobs on "Load more"
+
+UI:
+┌──────────────────────────────────────┐
+│ Hacker News Jobs Board               │
+│                                      │
+│ ┌──────────────────────────────────┐ │
+│ │ Job title link                   │ │
+│ │ by author   MM/DD/YYYY, HH:MM   │ │
+│ └──────────────────────────────────┘ │
+│ ┌──────────────────────────────────┐ │
+│ │ Job title link                   │ │
+│ │ by author   MM/DD/YYYY, HH:MM   │ │
+│ └──────────────────────────────────┘ │
+│              ...6 cards...           │
+│                                      │
+│         [ Load more jobs ]           │
+└──────────────────────────────────────┘
+
+Behavior:
+1. On mount → fetch all job IDs → take first 6 → fetch each detail
+2. Each card shows skeleton/loading until its detail resolves
+3. "Load more" takes the next 6 IDs, fetches their details, appends
+4. Title links open in new tab (target="_blank")
+5. Timestamp from Unix epoch → formatted MM/DD/YYYY, HH:MM
+
+Bonus (if time permits):
+- Error state with retry per failed card
+- Hide "Load more" when all jobs are loaded
+- Skeleton shimmer animation during loading
+
+Look and feel:
+Beige page background, white bordered cards, orange title and button

@@ -1,0 +1,50 @@
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comment-container {
+  margin-left: 16px;
+  margin-bottom: 8px;
+  padding-left: 8px;
+  border-left: 2px solid rgb(221, 217, 217);
+}
+
+.button {
+  border: none;
+  background-color: white;
+}
+.primary {
+  color: blue;
+}
+
+.danger {
+  color: red;
+}
+
+.metrics {
+  align-items: center;
+  gap: 4px;
+}
+
+.collapse {
+  font-size: large;
+  background-color: aliceblue;
+}
+
+.header {
+  align-items: center;
+  gap: 8px;
+  border-radius: 16px;
+}
+
+.time-stamp {
+  color: gray;
+}
