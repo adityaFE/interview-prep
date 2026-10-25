@@ -160,6 +160,7 @@ All folders created. Ready to rebuild from specs below.
 
 | Folder Name | Component / Description | Status | Time Target |
 | :--- | :--- | :--- | :--- |
+| `access-review-console/` | Access Review Console (Tuebora Company Drill: bulk actions, debounced search, modal, indeterminate select, optimistic UI) | 🎯 Priority Queued | 50 min |
 | `data-table-with-sorting/` | Nested Data Table with Sorting (randomuser API, deepFlatten) | In Progress (Day 30) | 50 min |
 | `drag-and-drop-kanban/` | Drag and Drop / Kanban Board (layout only, no drop logic yet) | Partial | 60 min |
 | `e-commerce-cart/` | E-Commerce Cart Flow (Paginated, Router, Context) | In Progress (Day 24/25) | 110 min |
@@ -184,6 +185,144 @@ All folders created. Ready to rebuild from specs below.
 ## Machine Coding — Detailed Specs (Recovered from Previous Laptop)
 
 All specs below are recovered from actual source code at `/Users/a290036676/Documents/repos/component-creation/src/components` on your previous machine.
+
+---
+
+## 🎯 Company Specific Machine Coding Drills
+
+### 0. Tuebora Company Machine Coding Drill: Access Review Console — 50 min
+
+**Folder**: `access-review-console/` (or `src/components/access-review-console/`)  
+**Target Time**: 50 minutes (30 min MVP + 10 min bulk actions/modals + 10 min optimistic UI/polish)  
+**Target Role/Context**: Tuebora Identity Governance & Access Management (IGA / Access Certification)
+
+**Scenario**:
+A manager certifies their team's access. Each row represents one entitlement: a user, an application, an assigned entitlement, a risk level, and a decision status (`pending`, `approved`, `revoked`).
+
+**TypeScript Data Types**:
+```ts
+export type RiskLevel = 'low' | 'medium' | 'high';
+export type DecisionStatus = 'pending' | 'approved' | 'revoked';
+
+export type Item = {
+  id: string;
+  user: string;
+  app: string;
+  entitlement: string;
+  risk: RiskLevel;
+  lastUsed: string; // ISO date string e.g. "2026-08-15T10:30:00Z"
+  status: DecisionStatus;
+};
+
+export type FetchItemsParams = {
+  page: number;
+  pageSize: number;
+  search?: string;
+  risk?: RiskLevel | 'all';
+  status?: DecisionStatus | 'all';
+};
+
+export type FetchItemsResponse = {
+  items: Item[];
+  total: number;
+};
+```
+
+**Mock API Requirements**:
+1. `fetchItems({ page, pageSize, search, risk, status })`:
+   - Returns `{ items: Item[], total: number }` from ~500 generated mock rows.
+   - Simulates realistic network latency (300ms–800ms random delay).
+   - Supports server-side pagination, search matching (`user`, `app`, `entitlement`), and risk/status filtering.
+2. `submitDecisions(ids: string[], decision: 'approved' | 'revoked', reason?: string)`:
+   - Persists status updates to the in-memory dataset.
+   - Simulates a ~10% random network failure rate to test optimistic rollback handling.
+
+**Requirements Breakdown**:
+
+- **Must-Have (Core 30 min MVP)**:
+  1. **Table with Server-Side Pagination**: 25 items per page with Next / Prev / Page Count controls and total record badge.
+  2. **Debounced Search & Filters**:
+     - Search input debounced by 300ms (filtering `user`, `app`, `entitlement`).
+     - Risk filter dropdown (`all`, `low`, `medium`, `high`) and Status filter dropdown (`all`, `pending`, `approved`, `revoked`).
+     - Any filter or search change immediately resets pagination to Page 1.
+  3. **Selection & Indeterminate Checkbox**:
+     - Row checkboxes for single-item selection.
+     - Header "Select All on Page" checkbox that reflects an **indeterminate** DOM state when partially selected (via `useRef` + `ref.current.indeterminate = true`).
+  4. **Bulk Action Controls**:
+     - "Approve Selected" (immediate bulk mutation).
+     - "Revoke Selected" (opens confirmation modal requiring a mandatory non-empty reason text input).
+  5. **Status States**: Loading skeleton/spinner, empty filter state ("No matching entitlements found"), and error banner with retry.
+
+- **Should-Have (10 min Polish & Reliability)**:
+  6. **Optimistic Updates with Rollback**: Immediately update local UI state upon action, take snapshot of previous state, and rollback with an error toast if `submitDecisions` fails.
+  7. **Page-Change Selection Strategy**: Deliberate design on whether selected IDs persist across pagination pages vs page-scoped selection (documenting the trade-off between `Set<string>` of IDs vs "Select all N matching").
+  8. **Accessibility (a11y)**:
+     - Clear `aria-label` / `aria-labelledby` on all table row checkboxes.
+     - Accessible modal dialog with focus trapping (`aria-modal="true"`, `role="dialog"`, Esc to close, focus return).
+     - `aria-live="polite"` region for dynamic result count updates.
+
+- **Stretch Goals**:
+  - Multi-column sorting (e.g. sort by `lastUsed` or `risk` severity).
+  - Sync filters and page state to URL query parameters (`URLSearchParams`).
+  - Undo action for recent decisions.
+  - Virtualized table rows for 100k records.
+  - Business Rule Guardrail: Reviewers are restricted from revoking `high` risk items without elevated justification.
+
+**Rules & Constraints**:
+- **First pass MUST use plain React hooks** (no TanStack Table, no MUI/AntD, no third-party table libraries).
+- Verbalize what TanStack Query (`useQuery`, `useMutation`, `queryClient.setQueryData`, `queryClient.invalidateQueries`) would replace in production.
+- Think out loud and explain trade-offs continuously.
+- Zero AI generation during live drill.
+
+**Suggested Timing Breakdown**:
+- `00:00 - 05:00`: Planning — Define state ownership, component tree, API signatures, race-condition strategy (`AbortController`).
+- `05:00 - 30:00`: Core Implementation — Mock API generator, paginated table, debounced search hook, filter dropdowns, loading/empty states.
+- `30:00 - 40:00`: Bulk Actions & Modals — Selection map/set, indeterminate checkbox ref, bulk approve, revoke modal dialog + reason validation.
+- `40:00 - 50:00`: Production Hardening — Optimistic UI update with rollback snapshot, error toast, keyboard a11y, follow-up readiness.
+
+**ASCII UI Mockup**:
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 🛡️ Access Review Console — Q3 Certification Campaign                         [Admin Persona]│
+├─────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Search: [ 🔍 Filter by user, app, or entitlement... (debounced 300ms) ]                     │
+│ Risk: [ All Risks ▼ ]   Status: [ Pending ▼ ]                   Showing: 1-25 of 142 items   │
+├─────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Actions for 3 selected items:  [ ✅ Approve (3) ]   [ 🚫 Revoke (3) ]                       │
+├──────┬──────────────────────┬─────────────┬──────────────────────────┬────────┬─────────────┤
+│ [─]  │ User                 │ Application │ Entitlement              │ Risk   │ Status      │
+├──────┼──────────────────────┼─────────────┼──────────────────────────┼────────┼─────────────┤
+│ [x]  │ alex.rivera@corp.io  │ AWS-Prod    │ IAM:AdministratorAccess  │ [HIGH] │ ⏳ Pending   │
+│ [x]  │ sarah.chen@corp.io   │ Snowflake   │ DB_ANALYTICS_READWRITE   │ [MED]  │ ⏳ Pending   │
+│ [x]  │ marco.rossi@corp.io  │ GitHub-Org  │ Org Owner Permission     │ [HIGH] │ ⏳ Pending   │
+│ [ ]  │ priya.patel@corp.io  │ Salesforce  │ Standard User            │ [LOW]  │ ✅ Approved  │
+│ [ ]  │ david.kim@corp.io    │ Jira        │ Software Developer       │ [LOW]  │ 🚫 Revoked   │
+├──────┴──────────────────────┴─────────────┴──────────────────────────┴────────┴─────────────┤
+│ « First   ‹ Prev   Page 1 of 6   Next ›   Last »                       [ 25 items / page ▼ ]│
+└─────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Modal Overlay (when clicking "Revoke"):
+┌─────────────────────────────────────────────────────────┐
+│ ⚠️ Confirm Access Revocation (3 entitlements selected)  │
+├─────────────────────────────────────────────────────────┤
+│ Please specify the compliance reason for revocation:    │
+│ [ Entitlement no longer required for current role...  ] │
+│                                                         │
+│ [ Cancel ]                                [ Confirm Revoke (3) ]│
+└─────────────────────────────────────────────────────────┘
+```
+
+**What Interviewers Watch For**:
+- **State Ownership**: Single source of truth for query params; derived values (e.g. `isAllSelected`, `isIndeterminate`) calculated on the fly without extra syncing state.
+- **Race Condition Handling**: Using `AbortController` or active request timestamps in `useEffect` so slow out-of-order API responses never overwrite newer filtered responses.
+- **Selection Integrity**: Avoiding bugs where stale IDs remain selected across filter changes or deleted rows.
+- **Clean Event-Driven Actions**: Triggering mutations from user click handlers, NOT inside reactive `useEffect` triggers.
+- **Failure Resilience**: Seamless state restoration when mock API rejects the bulk payload.
+
+**Likely Follow-up Probes**:
+1. *Scalability*: How does this architecture change if the dataset scales from 500 to 100,000 rows? (Windowing/virtualization, server-side cursor streaming, client memory footprint).
+2. *Configurable Personas*: How would you make table columns, visible actions, and approval policies dynamically configurable per department/persona without code changes?
+3. *Testing Strategy*: How would you structure unit and integration tests (React Testing Library + MSW) for the debounced search, indeterminate selection, and optimistic rollback?
 
 ---
 
@@ -1554,33 +1693,281 @@ John Doe    john@example.com   Acme Corp       2              60
 
 ---
 
-## Performance Topics
+---
 
-### ✅ Completed (0)
+## 🌐 15 Essential Frontend Architecture & Performance Concepts (Interview Mastery)
 
-### ⏳ Backlog (3 topics)
+> Deep conceptual mastery required for Senior Frontend & System Design rounds.
 
-1. **Lazy Loading (React.lazy, Suspense, dynamic imports)**
-   - Code splitting with dynamic import()
-   - React.lazy() component wrapping
-   - Suspense boundaries
-   - Fallback UI
-   - Error boundaries
+### 01. The Critical Rendering Path (CRP)
+- **Sequence**: HTML Parsing (DOM Tree) + CSS Parsing (CSSOM Tree) → Render Tree (visible elements) → Layout / Reflow (geometry & positions) → Paint / Rasterize (pixels & colors) → Composite (GPU layer blending).
+- **Render-Blocking Resources**: Synchronous `<script>` tags block DOM construction; `<link rel="stylesheet">` blocks rendering until CSSOM is ready.
+- **Optimization Strategy**: Minify & compress resources, async/defer non-critical scripts, inline critical CSS, prioritize viewport resources with `<link rel="preload">` and `preconnect`.
 
-2. **Tree Shaking**
-   - ES6 modules enable tree shaking
-   - Side-effects configuration in package.json
-   - Named vs default exports
-   - Build tools (webpack, Rollup)
-   - What doesn't get shaken
+### 02. The Core Web Vitals (CWV)
+- **LCP (Largest Contentful Paint, < 2.5s)**: Measures perceived load speed of main above-the-fold content. Optimization: Fast TTFB, CDN edge caching, optimized image formats (WebP/AVIF), `fetchpriority="high"` on hero images.
+- **INP (Interaction to Next Paint, < 200ms)**: Measures overall page responsiveness to user clicks/keys (replaces FID). Optimization: Break up long tasks (>50ms) using `scheduler.yield()` or `requestAnimationFrame`, offload heavy computation to Web Workers.
+- **CLS (Cumulative Layout Shift, < 0.1)**: Measures visual stability. Optimization: Always set explicit `width`/`height` or `aspect-ratio` on images/videos, avoid inserting dynamic content above existing content without reserving space, use `font-display: swap` with size-matched fallback font metrics.
 
-3. **Code Splitting + Bundle Analysis**
-   - Route-based code splitting
-   - Component-based splitting
-   - Bundle analysis tools (webpack-bundle-analyzer)
-   - Identifying large chunks
-   - Dynamic imports
-   - Prefetching vs preloading
+### 03. HTTP Caching
+- **Cache-Control Directives**:
+  - `public` vs `private` (CDN edge vs browser-only).
+  - `max-age=N` (TTL in seconds) vs `s-maxage=N` (shared CDN cache TTL).
+  - `no-cache` (must revalidate with server before using) vs `no-store` (never store in any cache).
+  - `must-revalidate` (stale content cannot be used without validation) vs `immutable` (file never changes, bypasses revalidation).
+  - `stale-while-revalidate=N` (serve stale content instantly while revalidating in background).
+- **Revalidation Mechanisms**:
+  - Strong: `ETag` (hash of content) with `If-None-Match` → returns `304 Not Modified`.
+  - Weak: `Last-Modified` with `If-Modified-Since`.
+- **Production Asset Strategy**: Hashed static assets (`bundle.a8f9c.js`) with `Cache-Control: public, max-age=31536000, immutable`; HTML files with `Cache-Control: no-cache`.
+
+### 04. Content Negotiation
+- **Mechanism**: Client sends request headers specifying capabilities/preferences; server responds with best representation using `Vary` header.
+- **Headers**:
+  - `Accept`: MIME types (`image/avif,image/webp,*/*`).
+  - `Accept-Encoding`: Compression algorithms (`gzip`, `br` / Brotli, `zstd`).
+  - `Accept-Language`: Localization preferences (`en-US,en;q=0.9,hi;q=0.8`).
+- **Server Response**: `Content-Type`, `Content-Encoding`, `Vary: Accept-Encoding, Accept`.
+
+### 05. Lazy Loading
+- **Components**: `React.lazy(() => import('./HeavyModal'))` combined with `<Suspense fallback={<Skeleton />}>`.
+- **Native Media**: `<img src="..." loading="lazy" decoding="async" />`.
+- **IntersectionObserver API**: Triggering data fetches or rendering when a sentinel element enters the viewport.
+- **On-Demand Interaction**: Deferring heavy libraries (e.g. Monaco Editor, Chart.js) until the user actually clicks the relevant tab/button.
+
+### 06. Bundle Splitting & Tree Shaking
+- **Code Splitting Strategies**:
+  - *Route-based*: Each page gets its own chunk (`/dashboard.js`, `/settings.js`).
+  - *Vendor-based*: Split node_modules into long-term cached vendor chunks.
+  - *Component/Dynamic*: Split conditional or rare sub-trees.
+- **Tree Shaking**:
+  - Dead-code elimination relying on static ESM (`import`/`export`).
+  - `package.json` `"sideEffects": false` or specific file globs.
+  - Avoiding CJS (`require`), barrel file re-export pitfalls, and mutations on imported modules.
+
+### 07. Critical CSS
+- **Concept**: The minimal set of CSS required to render the above-the-fold content of a page.
+- **Implementation**: Inlined directly into a `<style>` block in `<head>` to prevent render-blocking stylesheet network roundtrips.
+- **Asynchronous Rest**: Remaining stylesheets loaded asynchronously using `<link rel="preload" as="style" onload="this.rel='stylesheet'">`.
+
+### 08. Essential State vs Derived State
+- **Single Source of Truth**: Keep the stored state minimal. If a value can be computed from existing state or props, calculate it dynamically on the fly during render.
+- **Antipattern**: Syncing props to state or duplicating state inside `useEffect` (leads to stale values, out-of-sync bugs, and extra render cycles).
+- **Rule**: Store raw items and filter keyword; compute `filteredItems = items.filter(...)` or `useMemo(() => ..., [items, filter])`.
+
+### 09. The Reducer Pattern
+- **Concept**: Managing complex, multi-field, or interdependent state transitions through a pure function: `(state, action) => newState`.
+- **Advantages**:
+  - Centralizes and documents all possible state transitions.
+  - Eliminates impossible states and race-condition intermediate states.
+  - Highly testable with zero mock dependencies.
+- **Usage**: React `useReducer`, Redux Toolkit `createSlice`, Zustand actions.
+
+### 10. Windowing (List Virtualization)
+- **Mechanism**: Rendering only the slice of list items currently visible within the container viewport (+ small buffer overscan), instead of mounting thousands of DOM nodes.
+- **Libraries**: TanStack Virtual (`useVirtualizer`), `react-window`, `react-virtualized`.
+- **Engineering Challenges**:
+  - Handling variable/dynamic row heights with measurement caches (`measureElement`).
+  - Scroll position restoration during window resize or navigation.
+  - Accessibility: Managing keyboard focus navigation and providing `aria-rowcount`/`aria-rowindex`.
+
+### 11. Server-Side Rendering (SSR)
+- **Concept**: Generating complete HTML for a page on the server per request (via Node.js/Edge runtime) before streaming it to the client.
+- **Pros**: Fast First Contentful Paint (FCP), optimal SEO, social crawlers get full meta tags.
+- **Cons**: Slower Time to First Byte (TTFB) compared to static CDN, higher server compute overhead, requires client hydration before interactivity.
+
+### 12. Rehydration (Client-Side Hydration)
+- **Concept**: The process where client-side React parses the server-rendered HTML DOM, builds the internal Fiber tree, and attaches event listeners.
+- **Hydration Mismatch Causes**:
+  - Non-deterministic values (e.g. `Date.now()`, `Math.random()`).
+  - Accessing browser-only globals during SSR (`window.innerWidth`, `localStorage`).
+  - Invalid HTML nesting (e.g. `<p>` inside `<p>`, `<div>` inside `<p>`).
+- **Selective / Progressive Hydration**: React 18 `<Suspense>` streams HTML chunks and hydrates interactive islands independently without blocking the entire page.
+
+### 13. Partial Pre-rendering (PPR)
+- **Concept**: Next.js hybrid rendering model combining the speed of static edge caching with the freshness of dynamic server streaming in a single HTTP response.
+- **How it works**: The static shell (layout, navigation, fallback skeletons) is pre-rendered at build time and served immediately from edge CDN; dynamic holes wrapped in `<Suspense>` are streamed from the server as promises resolve.
+
+### 14. React Server Components (RSC)
+- **Concept**: Components that execute strictly on the server and never ship JavaScript to the client bundle.
+- **RSC vs SSR**:
+  - SSR sends raw HTML string + client JS bundle to hydrate.
+  - RSC renders to a serialized JSON wire format (virtual DOM representation), allowing direct database/filesystem access with zero client bundle cost.
+- **Client Components (`'use client'`)**: Mark the boundary where client interactivity, state (`useState`), and browser event listeners begin.
+
+### 15. Micro Frontends
+- **Concept**: Architectural pattern decomposing monolithic frontend applications into autonomous, independently developed, tested, and deployed sub-applications.
+- **Implementation Strategies**:
+  - **Module Federation (Webpack 5 / Vite)**: Dynamic runtime sharing of components and dependencies across distinct builds.
+  - **Web Components**: Framework-agnostic custom elements with shadow DOM isolation.
+  - **Iframe Sandboxing / Edge Routing**: Complete isolation per domain route.
+- **Trade-offs**: Autonomy and team scaling vs dependency duplication, CSS leakage, routing desynchronization, and complex cross-app state sharing.
+
+---
+
+## 🎯 Tuebora Mock Interview Question Bank (7 Domains)
+
+> Designed for Tuebora Senior Frontend / Full-Stack Interview Drill.  
+> Practice guideline: Answer each question aloud in ~2 minutes with structure: **Concept / Thesis → Architectural Trade-off → Concrete Production Example**.
+
+---
+
+### Domain 1: React & JS Core (5 Questions)
+
+1. **Walk through what happens from setState to the DOM update. When does React bail out of a re-render?**
+   - *Key Points*: Fiber reconciliation, render phase (pure, async in Concurrent React) vs commit phase (synchronous DOM mutations).
+   - *Bailout conditions*: `Object.is(prevState, newState)` shallow equality, component bailout via `React.memo` (props unchanged), or parent re-rendering without children props changing.
+   - *Interview Punchline*: Explain why updating state with the exact same primitive skips render phase, while object mutation fails bailout checks.
+
+2. **When is useEffect the wrong tool? Give an example you fixed.**
+   - *Key Points*: Deriving state from props/state, transforming data for rendering, handling user click events inside effects vs event handlers, resetting state on prop change (prefer keys).
+   - *Production Example*: Converting a redundant `useEffect` that synced search filter to filtered list into a pure inline `useMemo` / derived calculation.
+
+3. **How do stale closures arise in hooks, and how do you fix them?**
+   - *Key Points*: Lexical environment captured at render time in callbacks, `setTimeout`, `setInterval`, or event listeners with empty/incomplete dependency arrays.
+   - *Fixes*: Functional state updates `setCount(prev => prev + 1)`, mutable refs `useRef` for latest value capture, or exhaustive dependency array (`useEffectEvent` in React 19).
+
+4. **When do useMemo, useCallback, and React.memo help, and when do they hurt? How do you find the real cause of a slow render?**
+   - *Key Points*: Memoization cost vs re-computation cost. `useCallback` only saves child re-renders when child is wrapped in `React.memo` or used in dependency arrays.
+   - *Diagnostics*: React DevTools Profiler (Flamegraph, "Why did this render?"), `useWhyDidYouUpdate` custom hook, Chrome Performance panel.
+
+5. **Would you use useTransition or useDeferredValue on a filter input? Why?**
+   - *Key Points*: `useTransition` when you control the state update function (`startTransition(() => setFilter(val))`), `useDeferredValue` when you receive a value as a prop from an external source or component you don't own.
+   - *Trade-offs*: Keeping the text input responsive at 60 FPS while deferring expensive list/table re-rendering in the background.
+
+---
+
+### Domain 2: State & Data Management (3 Questions)
+
+6. **Redux Toolkit vs Context vs TanStack Query: what goes where in an enterprise app?**
+   - *Key Points*:
+     - **Server State** (caching, deduplication, invalidation, pagination, polling) → **TanStack Query / SWR**.
+     - **Complex Global Client State** (undo/redo, multi-step workflows, canvas, offline mutations) → **Redux Toolkit / Zustand**.
+     - **Low-Frequency Ambient State** (theming, locale, authenticated user profile) → **React Context**.
+   - *Pitfall*: Storing server API responses in Redux store leads to manual cache invalidation nightmares.
+
+7. **Design cache invalidation for a bulk approve/revoke on a paginated list.**
+   - *Key Points*:
+     - Granular item cache update vs bulk list invalidation (`queryClient.invalidateQueries({ queryKey: ['access-items'] })`).
+     - Optimistic updates via `queryClient.setQueryData` across paginated queries.
+     - Handling total count updates when filtering by status (e.g. approving a "pending" item removes it from the pending filter query).
+
+8. **How do you handle optimistic updates when two mutations overlap and one fails?**
+   - *Key Points*:
+     - Snapshot previous cache state on mutation start (`onMutate`).
+     - Rollback to exact snapshot on failure (`onError`).
+     - Mutation sequencing: Cancel in-flight queries (`queryClient.cancelQueries`) before applying optimistic patch to prevent race conditions.
+     - Re-fetch on `onSettled` to sync authoritative server state.
+
+---
+
+### Domain 3: Performance & Next.js (2 Questions)
+
+9. **A table has 50k rows. What are your options and their trade-offs, including accessibility with virtualization?**
+   - *Key Points*:
+     - **Pagination (Server-side)**: Low DOM node count, easy URL sharing, standard screen-reader navigation.
+     - **Virtualization (Windowing - TanStack Virtual / react-window)**: Smooth continuous scrolling, keeps DOM node count under ~100 nodes.
+     - *a11y Trade-off*: Screen readers and in-page `Ctrl+F` cannot discover virtualized (unmounted) DOM nodes. Solution: Provide search/filter controls, `aria-rowcount`, `aria-rowindex`, and accessible pagination mode fallback.
+
+10. **For an authenticated enterprise dashboard, what should be server-rendered and what should stay client-side?**
+    - *Key Points*:
+      - **Server-rendered (SSR / RSC)**: Shell layout, navigation skeleton, user permission metadata, initial page data prefetch for fast FCP/LCP without layout shift.
+      - **Client-side (CSR / Client Components)**: Interactive data tables, real-time status web sockets, optimistic mutation forms, complex modal workflows, filter controls.
+      - *Security*: Sensitive tokens / session cookies verified at server middleware before emitting HTML.
+
+---
+
+### Domain 4: Enterprise Architecture & Tuebora Alignment (4 Questions)
+
+11. **Design a config-driven UI where different personas or departments get different layouts with no code. Cover the schema, component registry, validation, and versioning.**
+    - *Key Points*:
+      - **JSON Schema**: Declarative layout definition (sections, grids, widgets, field permissions, condition rules e.g. `{ if: "risk == 'high'", show: "justificationField" }`).
+      - **Component Registry**: Map string identifiers (`"AccessTable"`, `"RiskBadge"`) to lazy-loaded React components.
+      - **Validation**: Schema validation with Zod / AJV at runtime with graceful fallback error boundaries for unknown widgets.
+      - **Versioning**: Schema version header (`v1`, `v2`) with backward-compatible migration transformers.
+
+12. **How do you model permission-aware UI, and what happens when permissions change mid-session?**
+    - *Key Points*:
+      - RBAC / ABAC model (Roles & Attributes). Declarative wrapper `<Can action="revoke" resource="entitlement">` or `usePermission()` hook.
+      - **Mid-session permission change**: Server sends 403 Forbidden on API call or pushes event via WebSocket/SSE → Client invalidates user profile query → UI gracefully disables unauthorized controls + surfaces toast explaining revocation.
+
+13. **How would you do multi-tenant theming with design tokens?**
+    - *Key Points*:
+      - CSS Custom Properties (Variables) injected at the root / container level (`--color-primary`, `--border-radius`, `--brand-logo`).
+      - Design token tiers: Global tokens (colors, spacing) → Semantic tokens (`--surface-critical`, `--text-interactive`) → Component tokens.
+      - Tenant stylesheet / token JSON loaded per subdomain or tenant header without rebuilding the application bundle.
+
+14. **When do micro-frontends make sense, and what goes wrong (shared deps, versioning, routing)?**
+    - *Key Points*:
+      - *When they make sense*: Autonomous multi-team scaling, independent deployment pipelines across large decoupled enterprise domains.
+      - *Failure modes & traps*: Dependency bloat (multiple React versions on same page), CSS leakage, fragmented navigation/routing history, shared state complexity, difficult end-to-end testing.
+      - *Mitigations*: Module Federation (Webpack / Vite), shared design system package with strict peer dependencies, central auth orchestrator.
+
+---
+
+### Domain 5: AI & Agents (3 Questions)
+
+15. **Describe an agent you shipped: its tools, guardrails, evaluation, and failure modes.**
+    - *Key Points*:
+      - *Tools*: Structured JSON schema tool calls (e.g. `queryAccessLog`, `revokeAccess`, `flagAnomalousEntitlement`).
+      - *Guardrails*: Schema validation, output filtering, rate-limiting, human-in-the-loop confirmation before destructive actions.
+      - *Evaluation*: Eval benchmark suite measuring tool selection accuracy, hallucination rate, latency, and context budget adherence.
+      - *Failure Modes*: Tool hallucination, infinite looping, context exhaustion, prompt injection.
+
+16. **Design the UI for natural-language queries like "who has admin on payroll and hasn't logged in for 90 days?" Cover streaming, showing the interpreted query, confirming before any action, and error states.**
+    - *Key Points*:
+      - **Streaming Response**: Real-time token streaming with skeleton / typing state.
+      - **Interpreted Filter Translation**: Display structured pill filters generated by AI so the user can verify the translation (`App: Payroll`, `Role: Admin`, `Inactive: >90 days`).
+      - **Human-in-the-Loop Confirmation**: For any resulting action (e.g. "Revoke 14 users"), show a strict confirmation modal with itemized diff.
+      - **Error Recovery**: Suggest query corrections when query is ambiguous or schema properties don't match.
+
+17. **If an AI agent had access to enterprise systems, what would you want logged and visible about it?**
+    - *Key Points*:
+      - **Audit Trail**: Agent model version, prompt hash, exact tool call inputs/outputs, confidence score, user session id, timestamp.
+      - **Explainability**: Chain-of-thought / reasoning summary why a particular decision was recommended.
+      - **Compliance Visibility**: Clear UI badge indicating whether an action was AI-recommended vs human-approved.
+
+---
+
+### Domain 6: API & Security (3 Questions)
+
+18. **For the review list, cursor or offset pagination? How do you report per-item results when a bulk action partly fails?**
+    - *Key Points*:
+      - **Cursor vs Offset**: Offset (`page`/`pageSize`) allows jumping to arbitrary pages and showing total count (critical for compliance audits). Cursor (`cursor`/`limit`) is better for real-time mutating feeds without duplicate/missing rows.
+      - **Partial Bulk Action Failures**: Return `207 Multi-Status` or structured payload `{ successfulIds: [...], failedIds: [{ id, reason }] }`. UI highlights failed rows in table and displays itemized retry toast.
+
+19. **Describe an API or backend piece you owned and where your ownership ended. Be precise.**
+    - *Key Points*:
+      - Detail your role in API contract design, migration layer, OpenAPI/Swagger specifications, mock endpoints for frontend parallel development.
+      - Articulate backend boundaries: idempotency keys (`Idempotency-Key` header on bulk mutations), HTTP status codes (200, 201, 207, 400, 401, 403, 409 Conflict, 429 Rate Limit), and resilience patterns.
+
+20. **How do you secure the frontend of a compliance product (XSS, CSP, token storage, session expiry, audit trail)?**
+    - *Key Points*:
+      - **XSS**: React auto-escaping, avoiding `dangerouslySetInnerHTML`, DOMPurify for rich text.
+      - **CSP (Content Security Policy)**: Strict `default-src 'self'`, forbidding `unsafe-inline` and `unsafe-eval`.
+      - **Token Storage**: `httpOnly`, `Secure`, `SameSite=Strict` cookies (avoid localStorage for auth tokens to prevent XSS exfiltration).
+      - **Session Expiry**: Inactivity timer modal, refresh token rotation with silent re-auth before expiry.
+      - **Audit Trail**: Frontend event telemetry logging user action, timestamp, IP, and tenant ID.
+
+---
+
+### Domain 7: Behavioral & Fit (4 Questions)
+
+21. **Tell me about yourself in 90 seconds.**
+    - *Structure*: Present role & core identity (Senior Frontend / UI Engineer) → Track record & high-impact achievements (scale, performance, architecture) → Passion for enterprise security/IGA tooling → Why Tuebora is the perfect intersection.
+
+22. **Why a small product company after a 200+ engineer org? Have an honest answer ready on the trade-offs.**
+    - *Key Points*:
+      - *Pros*: Greater ownership, direct customer impact, rapid feedback loop, end-to-end architecture decisions.
+      - *Trade-offs acknowledged*: Less specialization / narrower infra tooling, wearing multiple hats, need for high self-direction.
+
+23. **Tell me about a time you disagreed with a design or backend decision.**
+    - *Structure*: Context → The technical disagreement (e.g. pagination strategy, data payload size, UX blocking) → How you evaluated trade-offs with data/benchmarks → Collaborative compromise reached → Positive project outcome.
+
+24. **How do you use AI tools day to day, and where do they fail you?**
+    - *Key Points*:
+      - *Effective use*: Boilerplate generation, regex/parser creation, exploring alternative architectural patterns, drafting test suites.
+      - *Where they fail*: Nuanced state synchronization, subtle race conditions in concurrent React, domain-specific enterprise security constraints, hallucinations in complex APIs. Always require human verification.
 
 ---
 
