@@ -57,46 +57,130 @@
 
 | #   | Question                         | Source               | Folder                  | Time   |
 | --- | -------------------------------- | -------------------- | ----------------------- | ------ |
-| 1   | Job Board                        | Previous Machine     | job-board               | 30 min |
-| 2   | User Directory (TypeScript)      | Previous Machine     | user-directory          | 60 min |
-| 3   | File Explorer                    | Previous Machine     | file-explorer           | 45 min |
-| 4   | Flashcard Quiz / Flip Card       | Previous Machine     | flip-card               | 45 min |
-| 5   | Infinite Scroll                  | Previous Machine     | infinte-scroll          | 35 min |
-| 6   | CSS User Directory               | Previous Machine     | user-card               | 60 min |
-| 7   | Star Rating                      | Previous Machine     | star-rating             | 30 min |
-| 8   | Rick & Morty Characters          | Previous Machine     | rick-morty              | 50 min |
-| 9   | Todo App                         | Previous Machine     | -                       | 30 min |
-| 10  | Product Cart with Discounts      | Previous Machine     | product-cart            | 60 min |
-| 11  | Tabs Component                   | Previous Machine     | tab-component           | 30 min |
-| 12  | Toast Notification System        | Previous Machine     | toast-notification      | 45 min |
-| 13  | Reddit-Style Comments            | Previous Machine     | reddit-style-comments   | 60 min |
-| 14  | E-Commerce Cart Flow             | Previous Machine     | e-commerce-cart         | 110min |
-| 15  | Simple Input Form                | Previous Machine     | simple-input-form       | 25 min |
-| 16  | Multi-Field Form Validation      | Previous Machine     | input-form              | 45 min |
-| 17  | Nested Data Table with Sorting   | Previous Machine     | data-table-with-sorting | 50 min |
-| 18  | Drag and Drop Kanban             | Previous Machine     | drag-and-drop-kanban    | 60 min |
-| 19  | Lottery Spinner / Wheel          | Backlog              | -                       | 50 min |
-| 20  | Autocomplete / Typeahead         | Backlog              | -                       | 40 min |
-| 21  | Multi-Level Category Filter      | Backlog              | -                       | 35 min |
-| 22  | Countries App                    | Backlog              | -                       | 50 min |
-| 23  | Calculator                       | Backlog              | -                       | 30 min |
-| 24  | Modal / Popup                    | Backlog              | -                       | 25 min |
-| 25  | Accordion / Collapsible          | Backlog              | -                       | 30 min |
-| 26  | Pagination                       | Backlog              | -                       | 35 min |
-| 27  | Image Carousel / Slider          | Backlog              | -                       | 40 min |
-| 28  | Multi-step Form Wizard           | Backlog              | -                       | 50 min |
-| 29  | File Upload with Preview         | Backlog              | -                       | 40 min |
-| 30  | Dynamic Form Fields (add/remove) | Backlog              | -                       | 35 min |
-| 31  | Tabs with Routing                | Backlog              | -                       | 45 min |
-| 32  | Data Table (sort + filter)       | Backlog              | -                       | 50 min |
-| 33  | Breadcrumbs Navigation           | Backlog              | -                       | 25 min |
-| 34  | Virtual List / Windowing         | Backlog              | -                       | 60 min |
-| 35  | Image Gallery with Lightbox      | Backlog              | -                       | 50 min |
-| 36  | Debounce & Throttle Usage        | Backlog              | -                       | 45 min |
-| 37  | Tic-Tac-Toe Game                 | Backlog              | -                       | 55 min |
-| 38  | Color Picker                     | Backlog              | -                       | 35 min |
-| 39  | Countdown Timer                  | Backlog              | -                       | 30 min |
-| 40  | Chat Message List                | Backlog              | -                       | 40 min |
+| 1   | Access Review Console (Tuebora)  | 🎯 Tuebora Drill     | access-review-console   | 50 min |
+| 2   | Job Board                        | Previous Machine     | job-board               | 30 min |
+| 3   | User Directory (TypeScript)      | Previous Machine     | user-directory          | 60 min |
+| 4   | File Explorer                    | Previous Machine     | file-explorer           | 45 min |
+| 5   | Flashcard Quiz / Flip Card       | Previous Machine     | flip-card               | 45 min |
+| 6   | Infinite Scroll                  | Previous Machine     | infinte-scroll          | 35 min |
+| 7   | CSS User Directory               | Previous Machine     | user-card               | 60 min |
+| 8   | Star Rating                      | Previous Machine     | star-rating             | 30 min |
+| 9   | Rick & Morty Characters          | Previous Machine     | rick-morty              | 50 min |
+| 10  | Todo App                         | Previous Machine     | -                       | 30 min |
+| 11  | Product Cart with Discounts      | Previous Machine     | product-cart            | 60 min |
+| 12  | Tabs Component                   | Previous Machine     | tab-component           | 30 min |
+| 13  | Toast Notification System        | Previous Machine     | toast-notification      | 45 min |
+| 14  | Reddit-Style Comments            | Previous Machine     | reddit-style-comments   | 60 min |
+| 15  | E-Commerce Cart Flow             | Previous Machine     | e-commerce-cart         | 110min |
+| 16  | Simple Input Form                | Previous Machine     | simple-input-form       | 25 min |
+| 17  | Multi-Field Form Validation      | Previous Machine     | input-form              | 45 min |
+| 18  | Nested Data Table with Sorting   | Previous Machine     | data-table-with-sorting | 50 min |
+| 19  | Drag and Drop Kanban             | Previous Machine     | drag-and-drop-kanban    | 60 min |
+| 20  | Lottery Spinner / Wheel          | Backlog              | -                       | 50 min |
+| 21  | Autocomplete / Typeahead         | Backlog              | -                       | 40 min |
+| 22  | Multi-Level Category Filter      | Backlog              | -                       | 35 min |
+| 23  | Countries App                    | Backlog              | -                       | 50 min |
+| 24  | Calculator                       | Backlog              | -                       | 30 min |
+| 25  | Modal / Popup                    | Backlog              | -                       | 25 min |
+| 26  | Accordion / Collapsible          | Backlog              | -                       | 30 min |
+| 27  | Pagination                       | Backlog              | -                       | 35 min |
+| 28  | Image Carousel / Slider          | Backlog              | -                       | 40 min |
+| 29  | Multi-step Form Wizard           | Backlog              | -                       | 50 min |
+| 30  | File Upload with Preview         | Backlog              | -                       | 40 min |
+| 31  | Dynamic Form Fields (add/remove) | Backlog              | -                       | 35 min |
+| 32  | Tabs with Routing                | Backlog              | -                       | 45 min |
+| 33  | Data Table (sort + filter)       | Backlog              | -                       | 50 min |
+| 34  | Breadcrumbs Navigation           | Backlog              | -                       | 25 min |
+| 35  | Virtual List / Windowing         | Backlog              | -                       | 60 min |
+| 36  | Image Gallery with Lightbox      | Backlog              | -                       | 50 min |
+| 37  | Debounce & Throttle Usage        | Backlog              | -                       | 45 min |
+| 38  | Tic-Tac-Toe Game                 | Backlog              | -                       | 55 min |
+| 39  | Color Picker                     | Backlog              | -                       | 35 min |
+| 40  | Countdown Timer                  | Backlog              | -                       | 30 min |
+| 41  | Chat Message List                | Backlog              | -                       | 40 min |
+
+---
+
+## 🎯 Tuebora Interview Prep Track (Priority: Tuesday Target)
+
+### Part 1: Company Machine Coding Drill
+
+| # | Challenge | Target Time | Focus Areas | Status | Notes |
+|---|-----------|-------------|-------------|--------|-------|
+| 1 | **Access Review Console** | 50 min | Server pagination (25/pg), 300ms debounced search, risk/status filters, indeterminate checkbox, bulk approve/revoke modal + reason, optimistic updates + rollback toast, a11y focus trap | queued | Spec in `backlog.md` (`access-review-console/`) |
+
+### Part 2: Mock Interview Question Bank (7 Domains)
+
+#### Domain 1: React & JS Core
+| # | Question | Status | Key Concepts to Nail |
+|---|----------|--------|----------------------|
+| 1 | `setState` to DOM update pipeline & bailout rules | in-progress | Fiber reconciliation, render vs commit, `Object.is` bailout, `React.memo` |
+| 2 | When `useEffect` is the wrong tool + production refactor | not-started | Derived state in render, key resets, event handlers vs effects |
+| 3 | Stale closures in hooks & systematic fixes | not-started | Lexical scope capture, functional updater, `useRef`, `useEffectEvent` |
+| 4 | `useMemo` / `useCallback` / `React.memo` trade-offs & profiling | not-started | Profiler flamegraphs, reference identity, memoization overhead |
+| 5 | `useTransition` vs `useDeferredValue` for search filter | not-started | Controlled updater vs derived prop value, 60fps input responsiveness |
+
+#### Domain 2: State & Data Management
+| # | Question | Status | Key Concepts to Nail |
+|---|----------|--------|----------------------|
+| 6 | Redux Toolkit vs Context vs TanStack Query in enterprise | not-started | Server state vs global client state vs ambient state separation |
+| 7 | Cache invalidation for bulk approve/revoke on paginated lists | not-started | Query key structuring, optimistic mutation, item vs list invalidation |
+| 8 | Overlapping optimistic updates with partial mutation failures | not-started | Snapshot rollbacks (`onMutate`/`onError`), cancellation, refetch on settled |
+
+#### Domain 3: Performance & Next.js
+| # | Question | Status | Key Concepts to Nail |
+|---|----------|--------|----------------------|
+| 9 | 50k row table architecture, trade-offs & a11y virtualization | not-started | Virtualization windowing, DOM footprint, screen reader search fallback |
+| 10 | SSR vs CSR boundary split for authenticated enterprise dashboards | not-started | Shell prefetching, RSC middleware auth, interactive client components |
+
+#### Domain 4: Enterprise Architecture (Tuebora Product Alignment)
+| # | Question | Status | Key Concepts to Nail |
+|---|----------|--------|----------------------|
+| 11 | Config-driven UI with schema, component registry & versioning | not-started | JSON schema, dynamic component registry, Zod validation, migrations |
+| 12 | Permission-aware UI (RBAC/ABAC) & mid-session permission changes | not-started | Declarative `<Can>` gate, 403 handling, push invalidation, UX feedback |
+| 13 | Multi-tenant theming with CSS design tokens | not-started | CSS variables, token hierarchy, runtime tenant stylesheet loading |
+| 14 | Micro-frontends trade-offs, failures & mitigations | not-started | Module federation, version skew, shared dependencies, isolated routing |
+
+#### Domain 5: AI & Agents
+| # | Question | Status | Key Concepts to Nail |
+|---|----------|--------|----------------------|
+| 15 | Shipped AI agent: tools, guardrails, evaluation & failure modes | not-started | Structured JSON tools, human-in-the-loop, latency/eval benchmarks |
+| 16 | Natural language IGA query UI (streaming, interpretation, confirmation) | not-started | Token streaming, filter pill translation, diff confirmation modal |
+| 17 | Enterprise audit trail & visibility for autonomous AI actions | not-started | Audit logs, model hash, prompt trace, explainability, compliance badge |
+
+#### Domain 6: API & Security
+| # | Question | Status | Key Concepts to Nail |
+|---|----------|--------|----------------------|
+| 18 | Cursor vs offset pagination & partial bulk failure reporting (207) | not-started | Audit total counts vs cursor feeds, HTTP 207 Multi-Status, per-row retry |
+| 19 | API ownership boundary, idempotency keys & HTTP status semantics | not-started | Idempotency-Key headers, status codes (207, 409, 429), API contracts |
+| 20 | Frontend compliance security (XSS, CSP, httpOnly tokens, audit logs) | not-started | CSP headers, React escaping, avoiding localStorage for JWTs, session timeout |
+
+#### Domain 7: Behavioral & Fit
+| # | Question | Status | Key Concepts to Nail |
+|---|----------|--------|----------------------|
+| 21 | 90-second elevator pitch (Senior Frontend / IGA fit) | not-started | Past scale & architecture, identity governance passion, Tuebora synergy |
+| 22 | Why a small product company after 200+ engineer org | not-started | High ownership, speed to production, wearing multiple hats, trade-offs |
+| 23 | Disagreement with design/backend decision & resolution | not-started | Data-driven trade-offs, respectful negotiation, positive business impact |
+| 24 | Day-to-day AI tool usage & where AI models fail | not-started | Accelerating boilerplate/tests vs catching race conditions/security edge cases |
+
+### Part 3: 15 Core Architecture & Performance Concepts
+| # | Concept | Status | Core Focus & Interview Anchors |
+|---|---------|--------|--------------------------------|
+| 01 | The Critical Rendering Path (CRP) | not-started | DOM/CSSOM parsing, Render Tree, Reflow (Layout), Repaint, Compositing, Render-blocking resources |
+| 02 | The Core Web Vitals (CWV) | not-started | LCP (<2.5s, resource fetch priority), INP (<200ms, long tasks, yield to main thread), CLS (<0.1, layout shifts) |
+| 03 | HTTP Caching | not-started | Cache-Control (max-age, s-maxage, immutable, stale-while-revalidate), ETag & If-None-Match (304) |
+| 04 | Content Negotiation | not-started | Accept, Accept-Encoding (gzip, br, zstd), Accept-Language, Vary header & CDN caching implications |
+| 05 | Lazy Loading | not-started | React.lazy + Suspense, IntersectionObserver, dynamic imports on interaction, native loading="lazy" |
+| 06 | Bundle Splitting & Tree Shaking | not-started | Route/vendor chunking, dynamic imports, ESM static analysis, "sideEffects": false |
+| 07 | Critical CSS | not-started | Inlining above-the-fold CSS in `<head>`, deferring/async loading non-critical stylesheets |
+| 08 | Essential State | not-started | Single source of truth, minimal raw state, deriving computed values during render vs useEffect syncing |
+| 09 | The Reducer Pattern | not-started | Deterministic state transitions (state, action) => newState, state machines, useReducer, Redux Toolkit |
+| 10 | Windowing (List Virtualization) | not-started | Virtual DOM subset rendering, dynamic height measurement, scroll container a11y & DOM size bounds |
+| 11 | Server-Side Rendering (SSR) | not-started | renderToPipeableStream, TTFB vs FCP tradeoffs, streaming HTML chunks to client |
+| 12 | Rehydration | not-started | Attaching event listeners & fiber tree to server HTML, hydration mismatches, selective streaming hydration |
+| 13 | Partial Pre-rendering (PPR) | not-started | Static edge shell pre-rendering + dynamic Suspense streaming hole punch in a single HTTP response |
+| 14 | React Server Components (RSC) | not-started | Zero-bundle server execution, direct backend/DB access, RSC wire format vs SSR HTML |
+| 15 | Micro Frontends | not-started | Module Federation, Web Components, iframe isolation, shared runtime deps, blast radius control |
 
 ## React Concepts Queue
 
